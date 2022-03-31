@@ -1,6 +1,8 @@
 import { renderToString } from "react-dom/server";
 import { RemixServer } from "remix";
 import type { EntryContext } from "remix";
+import { injectStylesIntoStaticMarkup } from '@mantine/ssr';
+
 
 export default function handleRequest(
   request: Request,
@@ -14,7 +16,7 @@ export default function handleRequest(
 
   responseHeaders.set("Content-Type", "text/html");
 
-  return new Response("<!DOCTYPE html>" + markup, {
+  return new Response(`<!DOCTYPE html>${injectStylesIntoStaticMarkup(markup)}`, {
     status: responseStatusCode,
     headers: responseHeaders,
   });
