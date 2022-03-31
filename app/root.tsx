@@ -11,6 +11,7 @@ import {
 import type { MetaFunction } from "remix";
 
 import AuthContext from "./context/auth";
+import './context/axios';
 import styles from "./styles/app.css";
 
 export function links() {
@@ -47,6 +48,7 @@ export default function App() {
               홈
             </Link>
             <Link to="/login" style={{ marginRight: 30 }}>로그인</Link>
+            <Link to="/promotions" style={{ marginRight: 30}}>프로모션</Link>
             <Link to="/logout">로그아웃</Link>
           </header>
           <hr />
