@@ -1,20 +1,17 @@
-import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "remix";
 import Table from "~/components/table";
+import { useAxios } from "~/context/axios";
 
 const Promotions = () => {
+  const { axiosInstance } = useAxios({});
   const [promotionsList, setPromotionsList] = useState([] as any[]);
 
   const fetchPromotionsList = useCallback(async () => {
     if (typeof window !== "undefined") {
-      const accessToken = localStorage.getItem("access_token");
-
       try {
-        await axios
-          .get(`${window.ENV.API_ENDPOINT}/course/v1/promotions`, {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          })
+        await axiosInstance
+          .get(`${window.ENV.API_ENDPOINT}/course/v1/promotions`)
           .then((response) => {
             const { data } = response.data;
             return setPromotionsList(data);
@@ -23,11 +20,11 @@ const Promotions = () => {
         console.error(error);
       }
     }
-  }, []);
+  }, [axiosInstance]);
 
   useEffect(() => {
     void fetchPromotionsList();
-  }, [fetchPromotionsList]);
+  }, []);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">

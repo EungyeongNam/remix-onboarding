@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Button,
   Checkbox,
@@ -13,6 +12,8 @@ import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { Form } from "remix";
 import dayjs from "dayjs";
 import { useListState } from "@mantine/hooks";
+import { useNavigate } from "react-router-dom";
+import { useAxios } from "~/context/axios";
 
 type IFormData = {
   name: string;
@@ -26,28 +27,26 @@ type IFormData = {
 };
 
 const PromotionCreate = () => {
+  const navigate = useNavigate();
+  const { axiosInstance } = useAxios({});
+
   // 강의 목록 불러오기
-  const [checkCouresList, handleCheckCouresList] = useListState([] as any[]);
+  const [checkCouresList, handleCheckCouresList] = useListState<any>([]);
   const fetchCouresListTitle = useCallback(async () => {
     if (typeof window !== "undefined") {
-      const accessToken = localStorage.getItem("access_token");
-
       try {
-        await axios
+        await axiosInstance
           .get(
-            `${window.ENV.API_ENDPOINT}/course/v1/courses?page=1&per_page=100`,
-            {
-              headers: { Authorization: `Bearer ${accessToken}` },
-            }
+            `${window.ENV.API_ENDPOINT}/course/v1/courses?page=1&per_page=100`
           )
           .then((response) => {
             const { data } = response.data;
+
             const checkList = data.map(({ id, title }: any) => ({
               id,
               label: title,
               checked: false,
             }));
-
             handleCheckCouresList.setState(checkList);
           });
       } catch (error) {
@@ -69,9 +68,7 @@ const PromotionCreate = () => {
 
   const onSubmit: SubmitHandler<IFormData> = async (data) => {
     try {
-      const accessToken = localStorage.getItem("access_token");
-
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${window.ENV.API_ENDPOINT}/course/v1/promotions`,
         {
           ...data,
@@ -81,13 +78,12 @@ const PromotionCreate = () => {
             .add(59, "s")
             .toDate(),
           courses,
-        },
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
 
-      console.log(response.data);
+      if (response.status === 200) {
+        navigate("/promotions");
+      }
     } catch (error) {
       console.error(error);
     }
