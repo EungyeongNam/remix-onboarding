@@ -31,8 +31,8 @@ const PromotionCreate = () => {
   const { axiosInstance } = useAxios({});
 
   // 강의 목록 불러오기
-  const [checkCouresList, handleCheckCouresList] = useListState<any>([]);
-  const fetchCouresListTitle = useCallback(async () => {
+  const [checkCourseList, handleCheckCourseList] = useListState<any>([]);
+  const fetchCourseListTitle = useCallback(async () => {
     if (typeof window !== "undefined") {
       try {
         await axiosInstance
@@ -47,7 +47,7 @@ const PromotionCreate = () => {
               label: title,
               checked: false,
             }));
-            handleCheckCouresList.setState(checkList);
+            handleCheckCourseList.setState(checkList);
           });
       } catch (error) {
         console.error(error);
@@ -55,11 +55,15 @@ const PromotionCreate = () => {
     }
   }, []);
 
+  
   // 프로모션 생성하기
   const { register, control, handleSubmit, watch } = useForm<IFormData>();
   const isRate = watch("promotion_type") === "rate";
 
-  const courses = [...checkCouresList].reduce((acc, cur) => {
+  // 체크박스 전체 선택
+  const allChecked = checkCourseList.every(({ checked }) => checked);
+
+  const courses = [...checkCourseList].reduce((acc, cur) => {
     if (cur.checked) {
       return [...acc, cur.id];
     }
@@ -90,8 +94,8 @@ const PromotionCreate = () => {
   };
 
   useEffect(() => {
-    void fetchCouresListTitle();
-  }, [fetchCouresListTitle]);
+    void fetchCourseListTitle();
+  }, [fetchCourseListTitle]);
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -275,24 +279,21 @@ const PromotionCreate = () => {
                 className="relative flex items-start"
                 style={{ marginBottom: "10px" }}
               >
-                <div className="flex items-center h-5">
-                  <Checkbox
-                    id="all-check"
-                    aria-describedby="comments-description"
-                    name="all-check"
+                <Checkbox
+                    label="전체"
+                    checked={allChecked}
+                    onChange={() => {
+                      handleCheckCourseList.setState(current =>
+                        current.map(checkItem => ({
+                          ...checkItem,
+                          checked: !allChecked,
+                        })),
+                      )
+                    }}
                   />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="all-check"
-                    className="font-medium text-gray-700"
-                  >
-                    전체
-                  </label>
-                </div>
               </div>
 
-              {checkCouresList.map(({ id, label, checked }, index) => (
+              {checkCourseList.map(({ id, label, checked }, index) => (
                 <div
                   key={id}
                   className="relative flex items-start"
@@ -305,7 +306,7 @@ const PromotionCreate = () => {
                       checked={checked}
                       name={id}
                       onChange={(event) => {
-                        handleCheckCouresList.setItemProp(
+                        handleCheckCourseList.setItemProp(
                           index,
                           "checked",
                           event.currentTarget.checked
