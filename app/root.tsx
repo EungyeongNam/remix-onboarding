@@ -1,5 +1,4 @@
 import {
-  Link,
   Links,
   LiveReload,
   Meta,
@@ -11,8 +10,8 @@ import {
 import type { MetaFunction } from "remix";
 
 import AuthContext from "./context/auth";
-import './context/axios';
 import styles from "./styles/app.css";
+import Header from "./components/Header";
 
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
@@ -23,7 +22,7 @@ export function loader() {
     ENV: {
       API_ENDPOINT: process.env.API_ENDPOINT,
     },
-  }
+  };
 }
 
 export const meta: MetaFunction = () => ({
@@ -43,22 +42,17 @@ export default function App() {
       </head>
       <body>
         <AuthContext>
-          <header style={{ padding: "10px 20px" }}>
-            <Link to="/" style={{ marginRight: 30 }}>
-              홈
-            </Link>
-            <Link to="/login" style={{ marginRight: 30 }}>로그인</Link>
-            <Link to="/promotions" style={{ marginRight: 30}}>프로모션</Link>
-            <Link to="/logout">로그아웃</Link>
-          </header>
-          <hr />
-
+          <Header />
           <Outlet />
         </AuthContext>
 
         <ScrollRestoration />
-        <script dangerouslySetInnerHTML={{ __html: `window.ENV = ${JSON.stringify(data.ENV)}` }} />
-        {process.env.NODE_ENV === 'development' && <LiveReload />}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+          }}
+        />
+        {process.env.NODE_ENV === "development" && <LiveReload />}
         <Scripts />
       </body>
     </html>
