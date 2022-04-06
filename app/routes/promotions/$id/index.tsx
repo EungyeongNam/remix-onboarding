@@ -31,7 +31,6 @@ const PromotionDeatil = () => {
         await axiosInstance
           .get(`${window.ENV.API_ENDPOINT}/course/v1/promotions/${id}`)
           .then((response) => {
-            console.log(response.data);
             serPromotionInfo(response.data);
           });
       } catch (error) {
