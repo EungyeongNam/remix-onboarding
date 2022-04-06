@@ -66,7 +66,6 @@ const Pagination = ({
   // 페이지 목록 생성
   const generatePageList = (startPage: number, length: number) => {
     // 얕은 복사
-    console.log(Array.from({ length }, (value, index) => index + startPage));
     return Array.from({ length }, (value, index) => index + startPage);
   };
 
