@@ -1,6 +1,6 @@
 import { useListState } from "@mantine/hooks";
 import { useState, useCallback, useEffect } from "react";
-import { useParams } from "remix";
+import { Link, useParams } from "remix";
 import { useAxios } from "~/context/axios";
 
 interface IPromotionData {
@@ -79,6 +79,14 @@ const PromotionDeatil = () => {
         <h3 className="text-lg leading-6 font-medium text-gray-900">
           프로모션 상세 정보
         </h3>
+        <div>
+          <Link
+            to={`/promotions/${promotionInfo.id}/edit`}
+            className="text-indigo-600 hover:text-indigo-900"
+          >
+            수정하기
+          </Link>
+        </div>
       </div>
       <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
         <dl className="sm:divide-y sm:divide-gray-200">
