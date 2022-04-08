@@ -1,7 +1,23 @@
+import { useEffect } from "react";
+import { useNavigate } from "remix";
+
 export default function Index() {
-  return (
-    <div style={{width:'100%', padding: '10px 15px', boxSizing: 'border-box'}}>
-      <h1 style={{fontSize: 30}}>메인화면</h1>
-    </div>
-  )
+  const navigate = useNavigate();
+
+  let isTokenAvailable = false;
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("access_token");
+    const refreshToken = localStorage.getItem("refresh_token");
+
+    if (accessToken !== null && refreshToken !== null) {
+      isTokenAvailable = true;
+    }
+
+    if (!isTokenAvailable) {
+      return navigate("/login");
+    }
+  }, []);
+
+  return <h1>메인화면</h1>;
 }
