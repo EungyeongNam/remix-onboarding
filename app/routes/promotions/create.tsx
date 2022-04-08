@@ -5,14 +5,18 @@ import {
   Input,
   NumberInput,
   Radio,
+  RadioGroup,
   Textarea,
 } from "@mantine/core";
+import { BiWon } from "react-icons/bi";
+import { BsPercent } from "react-icons/bs";
 import { DatePicker } from "@mantine/dates";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { Form } from "remix";
 import dayjs from "dayjs";
 import { useListState } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
+
 import { useAxios } from "~/context/axios";
 
 type IFormData = {
@@ -22,8 +26,8 @@ type IFormData = {
   promotion_rate: number;
   promotion_amount: number;
   reason: string;
-  started_at: string;
-  ended_at: string;
+  started_at: Date;
+  ended_at: Date;
 };
 
 const PromotionCreate = () => {
@@ -55,7 +59,6 @@ const PromotionCreate = () => {
     }
   }, []);
 
-  
   // 프로모션 생성하기
   const { register, control, handleSubmit, watch } = useForm<IFormData>();
   const isRate = watch("promotion_type") === "rate";
@@ -98,9 +101,12 @@ const PromotionCreate = () => {
   }, [fetchCourseListTitle]);
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <div style={{ width: "100%", padding: "20px", boxSizing: "border-box" }}>
-        <h3 className="text-lg leading-6 font-medium text-gray-900">
+    <Form
+      onSubmit={handleSubmit(onSubmit)}
+      className="shadow sm:rounded-md sm:overflow-hidden"
+    >
+      <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
+        <h3 className="text-xl font-semibold text-gray-900">
           프로모션 생성하기
         </h3>
 
@@ -112,13 +118,7 @@ const PromotionCreate = () => {
             >
               이름
             </label>
-            <div className="max-w-lg flex rounded-md shadow-sm">
-              <Input
-                type="text"
-                {...register("name")}
-                style={{ width: "100%" }}
-              />
-            </div>
+              <Input type="text" {...register("name")} />
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -128,13 +128,11 @@ const PromotionCreate = () => {
             >
               설명
             </label>
-            <div className="max-w-lg flex rounded-md shadow-sm">
               <Input
                 type="text"
                 {...register("description")}
                 style={{ width: "100%" }}
               />
-            </div>
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -142,46 +140,23 @@ const PromotionCreate = () => {
               프로모션 유형
             </div>
             <div className="mt-4 sm:mt-0 sm:col-span-2">
-              <div
-                className="relative flex items-start"
-                style={{ marginBottom: "10px" }}
-              >
-                <div className="flex items-center h-5">
-                  <Radio
-                    value="rate"
-                    {...register("promotion_type")}
-                    type="radio"
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="promotion_type"
-                    className="font-medium text-gray-700"
+              <Controller
+                name="promotion_type"
+                control={control}
+                defaultValue="rate"
+                rules={{ required: true }}
+                render={({ field: { onChange, value } }) => (
+                  <RadioGroup
+                    defaultValue="rate"
+                    value={value}
+                    onChange={onChange}
                   >
-                    정률할인
-                  </label>
-                </div>
-              </div>
-
-              <div className="relative flex items-start">
-                <div className="flex items-center h-5">
-                  <Radio
-                    value="amount"
-                    {...register("promotion_type")}
-                    type="radio"
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="promotion_type"
-                    className="font-medium text-gray-700"
-                  >
-                    정액할인
-                  </label>
-                </div>
-              </div>
-
-              <div className="max-w-lg flex rounded-md shadow-sm">
+                    <Radio value="rate" label="정률할인" />
+                    <Radio value="amount" label="정액할인" />
+                  </RadioGroup>
+                )}
+              />
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
                 <Controller
                   name={isRate ? "promotion_rate" : "promotion_amount"}
                   control={control}
@@ -193,6 +168,9 @@ const PromotionCreate = () => {
                       value={value}
                       onChange={onChange}
                       label={`${isRate ? "할인율" : "할인금액"}을 입력해주세요`}
+                      icon={
+                        isRate ? <BsPercent size={18} /> : <BiWon size={18} />
+                      }
                       min={0}
                       max={isRate ? 100 : 1000000}
                       className="mt-4"
@@ -212,11 +190,7 @@ const PromotionCreate = () => {
             >
               프로모션 이유
             </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
-              <div className="max-w-lg flex rounded-md shadow-sm">
-                <Textarea {...register("reason")} style={{ width: "100%" }} />
-              </div>
-            </div>
+            <Textarea {...register("reason")} style={{ width: "100%" }} />
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -226,7 +200,7 @@ const PromotionCreate = () => {
             >
               프로모션 기간
             </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
+            <div className="mt-1 sm:mt-0">
               <div className="max-w-lg flex rounded-md shadow-sm">
                 <Controller
                   name="started_at"
@@ -274,48 +248,63 @@ const PromotionCreate = () => {
               강의목록
             </label>
 
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
+            <div
+              className="mt-1 sm:mt-0 rounded-md shadow-sm"
+              style={{
+                height: "170px",
+                overflowX: "auto",
+                border: "1px solid #ced4da",
+              }}
+            >
               <div
-                className="relative flex items-start"
-                style={{ marginBottom: "10px" }}
+                style={{
+                  height: "100%",
+                  padding: "10px 15px",
+                  boxSizing: "border-box",
+                }}
               >
-                <Checkbox
-                    label="전체"
-                    checked={allChecked}
-                    onChange={() => {
-                      handleCheckCourseList.setState(current =>
-                        current.map(checkItem => ({
-                          ...checkItem,
-                          checked: !allChecked,
-                        })),
-                      )
-                    }}
-                  />
-              </div>
-
-              {checkCourseList.map(({ id, label, checked }, index) => (
                 <div
-                  key={id}
                   className="relative flex items-start"
                   style={{ marginBottom: "10px" }}
                 >
-                  <div className="flex items-center h-5">
-                    <Checkbox
-                      id={id}
-                      label={label}
-                      checked={checked}
-                      name={id}
-                      onChange={(event) => {
-                        handleCheckCourseList.setItemProp(
-                          index,
-                          "checked",
-                          event.currentTarget.checked
-                        );
-                      }}
-                    />
-                  </div>
+                  <Checkbox
+                    label="전체"
+                    checked={allChecked}
+                    onChange={() => {
+                      handleCheckCourseList.setState((current) =>
+                        current.map((checkItem) => ({
+                          ...checkItem,
+                          checked: !allChecked,
+                        }))
+                      );
+                    }}
+                  />
                 </div>
-              ))}
+
+                {checkCourseList.map(({ id, label, checked }, index) => (
+                  <div
+                    key={id}
+                    className="relative flex items-start"
+                    style={{ marginBottom: "10px" }}
+                  >
+                    <div className="flex items-center h-5">
+                      <Checkbox
+                        id={id}
+                        label={label}
+                        checked={checked}
+                        name={id}
+                        onChange={(event) => {
+                          handleCheckCourseList.setItemProp(
+                            index,
+                            "checked",
+                            event.currentTarget.checked
+                          );
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
