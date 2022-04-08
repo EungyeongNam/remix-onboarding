@@ -1,3 +1,9 @@
+import {
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/outline";
 import { useCallback } from "react";
 
 interface IPagination {
@@ -19,7 +25,7 @@ const Pagination = ({
 
   // 시작 페이징
   const getStartPage = () => {
-    // 현재 페이지가 1이면 1을 return 
+    // 현재 페이지가 1이면 1을 return
     if (
       currentPage > pageSize - middlePosition &&
       currentPage < totalPage - middlePosition
@@ -77,13 +83,13 @@ const Pagination = ({
         className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         onClick={goFirstPage}
       >
-        처음
+        <ChevronDoubleLeftIcon className="w-5" />
       </button>
       <button
         className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         onClick={goPrevPage}
       >
-        이전
+        <ChevronLeftIcon className="w-5" />
       </button>
 
       {pageList.map((page) => (
@@ -97,7 +103,7 @@ const Pagination = ({
             page === currentPage
               ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
               : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
-          } relative inline-flex items-center px-4 py-2 border text-sm font-medium cursor-pointer`}
+          } relative inline-flex items-center px-4 py-2 border text-sm font-medium rounded-md cursor-pointer`}
         >
           {page}
         </button>
@@ -107,13 +113,13 @@ const Pagination = ({
         className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         onClick={goNextPage}
       >
-        다음
+        <ChevronRightIcon className="w-5" />
       </button>
       <button
         className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         onClick={goLastPage}
       >
-        끝
+        <ChevronDoubleRightIcon className="w-5" />
       </button>
     </div>
   );
