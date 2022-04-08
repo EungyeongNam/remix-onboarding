@@ -96,6 +96,10 @@ const PromotionCreate = () => {
     }
   };
 
+  const goPromotionsListPage = () => {
+    navigate("/promotions");
+  };
+
   useEffect(() => {
     void fetchCourseListTitle();
   }, [fetchCourseListTitle]);
@@ -118,7 +122,7 @@ const PromotionCreate = () => {
             >
               이름
             </label>
-              <Input type="text" {...register("name")} />
+            <Input type="text" {...register("name")} />
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -128,11 +132,11 @@ const PromotionCreate = () => {
             >
               설명
             </label>
-              <Input
-                type="text"
-                {...register("description")}
-                style={{ width: "100%" }}
-              />
+            <Input
+              type="text"
+              {...register("description")}
+              style={{ width: "100%" }}
+            />
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -287,7 +291,7 @@ const PromotionCreate = () => {
                     className="relative flex items-start"
                     style={{ marginBottom: "10px" }}
                   >
-                    <div className="flex items-center h-5">
+                    <div>
                       <Checkbox
                         id={id}
                         label={label}
@@ -312,6 +316,7 @@ const PromotionCreate = () => {
         <div className="pt-5">
           <div className="flex justify-start">
             <Button
+              onClick={goPromotionsListPage}
               type="button"
               className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
