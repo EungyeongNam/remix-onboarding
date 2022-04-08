@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
 } from "remix";
 import type { MetaFunction } from "remix";
 
@@ -29,12 +30,14 @@ export function loader() {
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "New Remix App",
+  title: "admin",
   viewport: "width=device-width,initial-scale=1",
 });
 
 export default function App() {
   const data = useLoaderData();
+  const location = useLocation();
+
   const headerContext = InitHeaderContext();
 
   return (
@@ -46,8 +49,15 @@ export default function App() {
       <body className="h-full">
         <AuthContext>
           <HeaderContext.Provider value={headerContext}>
-            <Header />
-            <main className="md:pl-64 flex flex-col flex-1">
+            {location.pathname !== "/login" ? <Header /> : null}
+
+            <main
+              className={`${
+                location.pathname !== "/login"
+                  ? "md:pl-64 flex flex-col flex-1"
+                  : "flex flex-col flex-1"
+              }`}
+            >
               <div
                 className="px-4 sm:px-6 md:px-8"
                 style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}
