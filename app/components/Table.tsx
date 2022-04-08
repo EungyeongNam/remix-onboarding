@@ -12,7 +12,7 @@ const Table = ({ listItem }: TableProps) => {
         className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
         style={{ overflowY: "auto" }}
       >
-        <table width={"100%"} className="md:table-fixed">
+        <table width={"100%"}>
           <thead className="bg-gray-50">
             <tr>
               <th
