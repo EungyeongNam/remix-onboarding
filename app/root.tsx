@@ -14,8 +14,6 @@ import AuthContext from "./context/auth";
 import styles from "./styles/app.css";
 import Header from "./components/Header";
 
-import { HeaderContext, InitHeaderContext } from "./context/header";
-
 export function links() {
   return [{ rel: "stylesheet", href: styles }];
 }
@@ -38,8 +36,6 @@ export default function App() {
   const data = useLoaderData();
   const location = useLocation();
 
-  const headerContext = InitHeaderContext();
-
   return (
     <html lang="en" className="h-full bg-gray-100">
       <head>
@@ -48,24 +44,22 @@ export default function App() {
       </head>
       <body className="h-full">
         <AuthContext>
-          <HeaderContext.Provider value={headerContext}>
-            {location.pathname !== "/login" ? <Header /> : null}
+          {location.pathname !== "/login" ? <Header /> : null}
 
-            <main
-              className={`${
-                location.pathname !== "/login"
-                  ? "md:pl-64 flex flex-col flex-1"
-                  : "flex flex-col flex-1"
-              }`}
+          <main
+            className={`${
+              location.pathname !== "/login"
+                ? "md:pl-64 flex flex-col flex-1"
+                : "flex flex-col flex-1"
+            }`}
+          >
+            <div
+              className="px-4 sm:px-6 md:px-8"
+              style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}
             >
-              <div
-                className="px-4 sm:px-6 md:px-8"
-                style={{ paddingTop: "1.5rem", paddingBottom: "1.5rem" }}
-              >
-                <Outlet />
-              </div>
-            </main>
-          </HeaderContext.Provider>
+              <Outlet />
+            </div>
+          </main>
         </AuthContext>
 
         <ScrollRestoration />

@@ -1,17 +1,26 @@
 import { Fragment, useState } from "react";
-import { Link } from "remix";
+import { Link, useLocation } from "remix";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   MenuIcon,
+  HomeIcon,
+  GiftIcon,
   UsersIcon,
   XIcon,
 } from "@heroicons/react/outline";
 
-import { useHeader } from "~/hook/useheader";
-
 const Header = () => {
+  const location = useLocation();
   const [navSidebarOpen, setNavSidebarOpen] = useState(false);
-  const { navigate, onClickCurrentPage } = useHeader();
+
+  const navigate = [
+    { name: "Home", href: "/", icon: HomeIcon },
+    {
+      name: "Promotions",
+      href: "/promotions",
+      icon: GiftIcon,
+    },
+  ];
 
   return (
     <div>
@@ -69,11 +78,10 @@ const Header = () => {
                       key={item.name}
                       to={item.href}
                       className={`${
-                        item.current === true
+                        item.href === location.pathname
                           ? "bg-indigo-800 text-white"
                           : "text-white hover:bg-indigo-600 hover:bg-opacity-75"
                       } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
-                      onClick={() => onClickCurrentPage(item)}
                     >
                       <item.icon
                         className="mr-4 flex-shrink-0 h-6 w-6 text-indigo-300"
@@ -121,11 +129,10 @@ const Header = () => {
                   key={item.name}
                   to={item.href}
                   className={`${
-                    item.current === true
+                    item.href === location.pathname
                       ? "bg-indigo-800 text-white"
                       : "text-white hover:bg-indigo-600 hover:bg-opacity-75"
                   } group flex items-center px-2 py-2 text-base font-medium rounded-md`}
-                  onClick={() => onClickCurrentPage(item)}
                 >
                   <item.icon
                     className="mr-4 flex-shrink-0 h-6 w-6 text-indigo-300"
