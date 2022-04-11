@@ -1,7 +1,10 @@
 import { useListState } from "@mantine/hooks";
 import { useState, useCallback, useEffect } from "react";
-import { Link, useParams } from "remix";
+import { Link, useNavigate, useParams } from "remix";
+import { FaRegEdit } from "react-icons/fa";
+
 import { useAxios } from "~/context/axios";
+import { Button } from "@mantine/core";
 
 interface IPromotionData {
   id: string;
@@ -20,6 +23,7 @@ interface IPromotionData {
 }
 
 const PromotionDeatil = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { axiosInstance } = useAxios({});
   const [promotionInfo, serPromotionInfo] = useState<IPromotionData>(Object);
@@ -68,57 +72,63 @@ const PromotionDeatil = () => {
     return acc;
   }, {});
 
+  const goPromotionsListPage = () => {
+    navigate("/promotions");
+  };
+
   useEffect(() => {
     void fetchPromotionDetail();
     void fetchCouresListTitle();
   }, []);
 
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-      <div className="px-4 py-5 sm:px-6">
-        <h3 className="text-lg leading-6 font-medium text-gray-900">
+    <div className="bg-white shadow overflow-hidden sm:rounded-lg py-6 px-4 space-y-6 sm:p-6">
+      <div className="flex">
+        <h3 className="text-xl font-semibold text-gray-900">
           프로모션 상세 정보
         </h3>
-        <div>
+        <div className="ml-auto">
           <Link
             to={`/promotions/${promotionInfo.id}/edit`}
-            className="text-indigo-600 hover:text-indigo-900"
+            className="text-indigo-600 hover:text-indigo-900 flex items-center"
           >
+            <FaRegEdit color="rgb(79 70 229)" className="mr-1" />
             수정하기
           </Link>
         </div>
       </div>
+
       <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
         <dl className="sm:divide-y sm:divide-gray-200">
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">아이디</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.id}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">이름</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.name}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">설명</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.description}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">프로모션 이유</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.reason}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">프로모션 유형</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.promotion_type === "rate"
@@ -127,7 +137,7 @@ const PromotionDeatil = () => {
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">할인</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.promotion_type === "rate"
@@ -136,35 +146,35 @@ const PromotionDeatil = () => {
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">프로모션 기간</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.started_at} ~ {promotionInfo.ended_at}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">생성일</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.created_at}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">수정일</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.updated_at}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">상태</dt>
             <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
               {promotionInfo.is_active === true ? "진행중" : "종료"}
             </dd>
           </div>
 
-          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+          <div className="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
             <dt className="text-sm font-medium text-gray-500">
               프로모션 강의목록
             </dt>
@@ -176,6 +186,18 @@ const PromotionDeatil = () => {
             </dd>
           </div>
         </dl>
+      </div>
+
+      <div className="pt-5">
+        <div className="flex justify-start">
+          <Button
+            onClick={goPromotionsListPage}
+            type="button"
+            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            목록가기
+          </Button>
+        </div>
       </div>
     </div>
   );
