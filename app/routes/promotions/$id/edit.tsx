@@ -22,8 +22,8 @@ interface IFormData {
   promotion_rate: number;
   promotion_amount: number;
   reason: string;
-  started_at: string;
-  ended_at: string;
+  started_at: Date;
+  ended_at: Date;
 }
 
 const PromotionEdit = () => {
@@ -66,15 +66,13 @@ const PromotionEdit = () => {
             .then((response) => {
               // 받아온 데이터를 [key, value] 쌍을 담은 배열로 반환후 key, value를 forEach 문을 통해 독립적으로 분리 후 setValue에 바인딩
               Object.entries(response.data).forEach(([key, value]: any) => {
-                if (key === 'id') return;
+                if (key === "id") return;
 
                 if (key === "started_at" || key === "ended_at") {
                   return setValue(key, new Date(value as string));
                 }
                 setValue(key, value);
               });
-
-              
 
               const checkList = courseList.map(({ id, title }: any) => ({
                 id,
@@ -134,13 +132,20 @@ const PromotionEdit = () => {
     }
   };
 
+  const goPromotionsListPage = () => {
+    navigate("/promotions");
+  };
+
   useEffect(() => {
     void fetchCourseListTitle();
   }, []);
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <div style={{ width: "100%", padding: "20px", boxSizing: "border-box" }}>
+    <Form
+      onSubmit={handleSubmit(onSubmit)}
+      className="shadow sm:rounded-md sm:overflow-hidden"
+    >
+      <div className="bg-white py-6 px-4 space-y-6 sm:p-6">
         <h3 className="text-lg leading-6 font-medium text-gray-900">
           프로모션 수정하기
         </h3>
@@ -221,7 +226,7 @@ const PromotionEdit = () => {
                 />
               </div>
 
-              <div className="max-w-lg flex rounded-md shadow-sm">
+              <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start">
                 <Controller
                   name={isRate ? "promotion_rate" : "promotion_amount"}
                   control={control}
@@ -255,23 +260,19 @@ const PromotionEdit = () => {
             >
               프로모션 이유
             </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
-              <div className="max-w-lg flex rounded-md shadow-sm">
-                <Controller
-                  name="reason"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: true }}
-                  render={({ field: { onChange, value } }) => (
-                    <Textarea
-                      value={value}
-                      onChange={onChange}
-                      style={{ width: "100%" }}
-                    />
-                  )}
+            <Controller
+              name="reason"
+              control={control}
+              defaultValue=""
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <Textarea
+                  value={value}
+                  onChange={onChange}
+                  style={{ width: "100%" }}
                 />
-              </div>
-            </div>
+              )}
+            />
           </div>
 
           <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
@@ -281,7 +282,7 @@ const PromotionEdit = () => {
             >
               프로모션 기간
             </label>
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
+            <div className="mt-1 sm:mt-0">
               <div className="max-w-lg flex rounded-md shadow-sm">
                 <Controller
                   name="started_at"
@@ -329,31 +330,45 @@ const PromotionEdit = () => {
               강의목록
             </label>
 
-            <div className="mt-1 sm:mt-0 sm:col-span-2">
+            <div
+              className="mt-1 sm:mt-0 rounded-md shadow-sm"
+              style={{
+                height: "170px",
+                overflowX: "auto",
+                border: "1px solid #ced4da",
+              }}
+            >
               <div
-                className="relative flex items-start"
-                style={{ marginBottom: "10px" }}
+                style={{
+                  height: "100%",
+                  padding: "10px 15px",
+                  boxSizing: "border-box",
+                }}
               >
-                <Checkbox
-                  label="전체"
-                  checked={allChecked}
-                  onChange={() => {
-                    handleCheckCourseList.setState((current) =>
-                      current.map((checkItem) => ({
-                        ...checkItem,
-                        checked: !allChecked,
-                      }))
-                    );
-                  }}
-                />
-              </div>
-              {checkCourseList.map(({ id, label, checked }, index) => (
                 <div
-                  key={id}
                   className="relative flex items-start"
                   style={{ marginBottom: "10px" }}
                 >
-                  <div className="flex items-center h-5">
+                  <Checkbox
+                    label="전체"
+                    checked={allChecked}
+                    onChange={() => {
+                      handleCheckCourseList.setState((current) =>
+                        current.map((checkItem) => ({
+                          ...checkItem,
+                          checked: !allChecked,
+                        }))
+                      );
+                    }}
+                  />
+                </div>
+
+                {checkCourseList.map(({ id, label, checked }, index) => (
+                  <div
+                    key={id}
+                    className="relative flex items-start"
+                    style={{ marginBottom: "10px" }}
+                  >
                     <Checkbox
                       id={id}
                       label={label}
@@ -368,8 +383,8 @@ const PromotionEdit = () => {
                       }}
                     />
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -377,6 +392,7 @@ const PromotionEdit = () => {
         <div className="pt-5">
           <div className="flex justify-start">
             <Button
+              onClick={goPromotionsListPage}
               type="button"
               className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
