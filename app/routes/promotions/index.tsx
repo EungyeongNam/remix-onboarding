@@ -1,18 +1,22 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "remix";
+import { useCallback, useMemo, useState } from "react";
+import { useQuery } from "react-query";
+import { Link, useLocation } from "remix";
 import qs from "qs";
 import dayjs from "dayjs";
 
 import Pagination from "~/components/Pagination";
 import Table from "~/components/Table";
 import { useAxios } from "~/context/axios";
+import { usePagination } from "~/hooks/usePagination";
 
 const Promotions = () => {
+  const location = useLocation();
   const { axiosInstance } = useAxios({});
-  const [promotionsList, setPromotionsList] = useState([]);
-
-  const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
+
+  const { setPageIndex, setPageSize, pageIndex, pageSize } = usePagination(
+    location.pathname
+  );
 
   const columns = useMemo(
     () => [
@@ -22,18 +26,18 @@ const Promotions = () => {
         Cell: (row: any) => {
           return (
             <code
-            style={{
-              display: "inline-block",
-              width: "100%",
-              color:'#000',
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              backgroundColor: "rgba(243,244,246)",
-            }}
-          >
-            <Link to={`/promotions/${row.value}`}>{row.value}</Link>
-          </code>
+              style={{
+                display: "inline-block",
+                width: "100%",
+                color: "#000",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+                backgroundColor: "rgba(243,244,246)",
+              }}
+            >
+              <Link to={`/promotions/${row.value}`}>{row.value}</Link>
+            </code>
           );
         },
         sortable: false,
@@ -71,7 +75,7 @@ const Promotions = () => {
         accessor: "created_at",
         Header: "생성일",
         Cell: (row: any) => {
-          return dayjs(row.value).format("YYYY-MM-DD")
+          return dayjs(row.value).format("YYYY-MM-DD");
         },
         sortable: true,
       },
@@ -79,7 +83,7 @@ const Promotions = () => {
         accessor: "updated_at",
         Header: "수정일",
         Cell: (row: any) => {
-          return dayjs(row.value).format("YYYY-MM-DD")
+          return dayjs(row.value).format("YYYY-MM-DD");
         },
         sortable: true,
       },
@@ -101,29 +105,37 @@ const Promotions = () => {
 
       if (typeof window !== "undefined") {
         try {
-          await axiosInstance
-            .get(
-              `${window.ENV.API_ENDPOINT}/course/v1/promotions?${queryString}`
-            )
-            .then((response) => {
-              const { data } = response.data;
-              const { pagination } = response.data;
-
-              setPromotionsList(data);
-              setTotalPage(pagination.total_page);
-              setCurrentPage(pagination.page);
-            });
+          return await axiosInstance.get(
+            `${window.ENV.API_ENDPOINT}/course/v1/promotions?${queryString}`
+          );
         } catch (error) {
           console.error(error);
         }
       }
     },
-    [axiosInstance]
+    []
   );
 
-  useEffect(() => {
-    void fetchPromotionsList(currentPage);
-  }, [currentPage]);
+  const fetchData = useCallback(
+    async ({ queryKey }) => {
+      const [_key, { pageIndex, pageSize }] = queryKey;
+      const page = (pageIndex as number);
+      console.log(page);
+      const response = await fetchPromotionsList(page, pageSize);
+      return response?.data;
+    },
+    [fetchPromotionsList]
+  );
+
+  const { data } = useQuery(
+    ["Promotions", { pageIndex, pageSize }],
+    fetchData,
+    {
+      onSuccess: (data) => {
+        setTotalPage(data?.pagination?.total_page);
+      },
+    }
+  );
 
   return (
     <>
@@ -141,14 +153,15 @@ const Promotions = () => {
         </div>
       </div>
 
-      <Table data={promotionsList} columns={columns} />
+      <Table data={data?.data ?? []} columns={columns} />
 
       <div className="mt-8">
         <Pagination
-          currentPage={currentPage}
-          pageSize={5}
+          controlledPageIndex={pageIndex}
+          controlledPageSize={pageSize}
+          setPageIndex={setPageIndex}
+          setPageSize={setPageSize}
           totalPage={totalPage}
-          onChange={setCurrentPage}
         />
       </div>
     </>
