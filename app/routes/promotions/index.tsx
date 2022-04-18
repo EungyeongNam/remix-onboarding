@@ -172,7 +172,7 @@ const Promotions = () => {
         </div>
       </div>
 
-      <SearchForm controllerFilters={filters} setFilters={setFilters} />
+      {/* <SearchForm controllerFilters={filters} setFilters={setFilters} onSubmit={} /> */}
 
       <Table data={data?.data ?? []} columns={columns} />
 

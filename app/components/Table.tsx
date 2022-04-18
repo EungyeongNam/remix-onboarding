@@ -1,21 +1,21 @@
-import { useTable, useSortBy } from "react-table";
+import { useTable, useSortBy, useGlobalFilter } from "react-table";
+import SearchForm from "./SearchForm";
 
-type TableProps = {
-  data: any;
-  columns: any;
-};
+const Table = (props: any) => {
+  const { columns, data } = props;
 
-const Table = ({ data, columns }: TableProps) => {
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns, data }, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, setGlobalFilter } =
+    useTable({ columns, data }, useGlobalFilter, useSortBy);
 
   return (
     <div className="mt-8 flex flex-col">
+      <SearchForm onSubmit={setGlobalFilter} />
+
       <div
         className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
         style={{ overflowY: "auto" }}
       >
-        <table {...getTableProps} width={"100%"}>
+        <table {...getTableProps()} width={"100%"}>
           <thead className="bg-gray-50">
             {headerGroups.map((headerGroup) => (
               // eslint-disable-next-line react/jsx-key
