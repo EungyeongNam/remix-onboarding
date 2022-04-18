@@ -8,15 +8,21 @@ import Pagination from "~/components/Pagination";
 import Table from "~/components/Table";
 import { useAxios } from "~/context/axios";
 import { usePagination } from "~/hooks/usePagination";
+import SearchForm from "~/components/SearchForm";
 
 const Promotions = () => {
   const location = useLocation();
   const { axiosInstance } = useAxios({});
   const [totalPage, setTotalPage] = useState(0);
 
-  const { setPageIndex, setPageSize, pageIndex, pageSize } = usePagination(
-    location.pathname
-  );
+  const {
+    setPageIndex,
+    setPageSize,
+    pageIndex,
+    pageSize,
+    filters,
+    setFilters,
+  } = usePagination(location.pathname);
 
   const columns = useMemo(
     () => [
@@ -99,8 +105,22 @@ const Promotions = () => {
 
   // 프로모션 목록 불러오기
   const fetchPromotionsList = useCallback(
-    async (page?: number, perPage: number = 10) => {
-      const params = { page, perPage };
+    async (page?: number, perPage: number = 10, filters = {}) => {
+      const params = { page, perPage, filters };
+
+      // 검색조건
+      if (filters) {
+        let filterString = "";
+
+        if (filters.name) {
+          filterString += `name:${filters.name}`;
+        }
+
+        if (filterString) {
+          params.filters = filterString;
+        }
+      }
+
       const queryString = qs.stringify(params);
 
       if (typeof window !== "undefined") {
@@ -118,17 +138,16 @@ const Promotions = () => {
 
   const fetchData = useCallback(
     async ({ queryKey }) => {
-      const [_key, { pageIndex, pageSize }] = queryKey;
-      const page = (pageIndex as number);
-      console.log(page);
-      const response = await fetchPromotionsList(page, pageSize);
+      const [_key, { pageIndex, pageSize, filters }] = queryKey;
+      const page = pageIndex as number;
+      const response = await fetchPromotionsList(page, pageSize, filters);
       return response?.data;
     },
     [fetchPromotionsList]
   );
 
   const { data } = useQuery(
-    ["Promotions", { pageIndex, pageSize }],
+    ["Promotions", { pageIndex, pageSize, filters }],
     fetchData,
     {
       onSuccess: (data) => {
@@ -152,6 +171,8 @@ const Promotions = () => {
           </Link>
         </div>
       </div>
+
+      <SearchForm controllerFilters={filters} setFilters={setFilters} />
 
       <Table data={data?.data ?? []} columns={columns} />
 
