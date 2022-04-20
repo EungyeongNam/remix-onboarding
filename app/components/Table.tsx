@@ -1,16 +1,13 @@
-import { useTable, useSortBy, useGlobalFilter } from "react-table";
-import SearchForm from "./SearchForm";
+import { useTable, useSortBy } from "react-table";
 
 const Table = (props: any) => {
   const { columns, data } = props;
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow, setGlobalFilter } =
-    useTable({ columns, data }, useGlobalFilter, useSortBy);
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable({ columns, data }, useSortBy);
 
   return (
     <div className="mt-8 flex flex-col">
-      <SearchForm onSubmit={setGlobalFilter} />
-
       <div
         className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
         style={{ overflowY: "auto" }}
