@@ -83,7 +83,13 @@ const Pagination = ({
     return Array.from({ length }, (value, index) => index + startPage);
   };
 
-  const pageList = generatePageList(getStartPage(), controlledPageSize);
+
+  let pageList;
+  if (totalPage > 1) {
+    pageList = generatePageList(getStartPage(), controlledPageSize);
+  } else {
+    pageList = generatePageList(1, 1);
+  }
 
   return (
     <div className="flex items-center">
@@ -134,7 +140,8 @@ const Pagination = ({
 
       <div className="ml-3">
         <span style={{ fontSize: "14px" }} className="text-gray-500">
-          현재 페이지 <span style={{ color: "#000" }}>{controlledPageIndex}</span>
+          현재 페이지{" "}
+          <span style={{ color: "#000" }}>{controlledPageIndex}</span>
         </span>
         <span
           className="inline-block text-gray-500"
