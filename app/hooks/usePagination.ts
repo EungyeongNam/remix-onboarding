@@ -15,7 +15,7 @@ export const usePagination = (pathname: string, defaultPageSize = 5, defaultName
     const locationState = useLocation() as unknown as CustomizedState;
 
     // 페이지 네비게이션
-    const pageIndex = useMemo(() => locationState.state?.page ?? 1, [locationState.state]);
+    const pageIndex = useMemo(() => locationState.state?.page ?? 1, [locationState.state?.page]);
     const setPageIndex = useCallback((page) => {
         return navigate(
             pathname,
@@ -27,7 +27,7 @@ export const usePagination = (pathname: string, defaultPageSize = 5, defaultName
     }, [navigate, pathname]);
 
     // 보여지는 페이지 수
-    const pageSize = useMemo(() => locationState.state?.perPage ?? defaultPageSize, [defaultPageSize, locationState.state]);
+    const pageSize = useMemo(() => locationState.state?.perPage ?? defaultPageSize, [defaultPageSize, locationState.state?.perPage]);
     const setPageSize = useCallback((perPage) => {
         const params = { page: 1, perPage };
         return navigate(
@@ -44,7 +44,7 @@ export const usePagination = (pathname: string, defaultPageSize = 5, defaultName
         return {
             name: locationState.state?.name ?? defaultName
         };
-    }, [defaultName, locationState.state]);
+    }, [defaultName, locationState.state?.name]);
 
     const setFilters = useCallback((filters) => {
         const name = filters?.name;
@@ -52,12 +52,9 @@ export const usePagination = (pathname: string, defaultPageSize = 5, defaultName
             pathname,
             {
                 state: { page: 1, name },
-                replace: false,
             }
         )
     }, [navigate, pathname]);
-
-    // console.log(location);
 
     return {
         pageIndex,

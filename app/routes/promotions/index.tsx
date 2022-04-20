@@ -107,20 +107,17 @@ const Promotions = () => {
   const fetchPromotionsList = useCallback(
     async (page?: number, perPage: number = 10, filters = {}) => {
       const params = { page, perPage, filters };
-
       // 검색조건
       if (filters) {
         let filterString = "";
 
         if (filters.name) {
-          filterString += `name:${filters.name}`;
+          filterString += `name:${filters.name}`; // 필터링 규칙
         }
-
         if (filterString) {
           params.filters = filterString;
         }
       }
-
       const queryString = qs.stringify(params);
 
       if (typeof window !== "undefined") {
@@ -172,7 +169,7 @@ const Promotions = () => {
         </div>
       </div>
 
-      {/* <SearchForm controllerFilters={filters} setFilters={setFilters} onSubmit={} /> */}
+      <SearchForm controllerFilters={filters} setFilters={setFilters} />
 
       <Table data={data?.data ?? []} columns={columns} />
 
